@@ -1,0 +1,181 @@
+body {
+  font-family: "Montserrat", sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0px;
+}
+header {
+  background-color: #1f0660;
+    
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  nav ul {
+    list-style-type: none;
+    display: flex;
+  }
+  .logo-img{
+    width: 150px;
+    height: 100px;
+   }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px;
+    background-color: white;
+    border-radius: 2px;
+    box-shadow: 0 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+    color: #00274d;
+}
+
+.faq, .contact-form, .support-options {
+    margin-bottom: 40px;
+}
+
+.faq h2, .contact-form h2, .support-options h2 {
+    margin-bottom: 20px;
+}
+
+.faq p {
+    margin-bottom: 10px;
+}
+
+/* Estilos do formulário */
+.contact-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-form label {
+    font-weight: bold;
+}
+
+.contact-form input, .contact-form textarea {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.contact-form button {
+    padding: 10px 15px;
+    background-color: #004492;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.contact-form button:hover {
+    background-color: #003366;
+}
+
+/* Estilos para suporte */
+.support-options ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.support-options li {
+    margin-bottom: 10px;
+}
+
+.support-options li a {
+    color: #004492;
+    text-decoration: none;
+}
+
+.support-options li a:hover {
+    text-decoration: underline;
+}
+.footer-container {
+  background-color: #1f0660;
+    
+    color: white;
+    padding: 40px;
+    font-family: Arial, sans-serif;
+    position: relative;
+    top: 50px;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .footer-section {
+    flex: 1;
+    min-width: 10px;
+    margin: 15px;
+  }
+  
+  .footer-section h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+  }
+  
+  .footer-section ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .footer-section ul li {
+    margin-bottom: 8px;
+  }
+  
+  .footer-section ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .footer-section ul li a:hover {
+    text-decoration: underline;
+  }
+  
+  .footer-section address {
+    font-style: normal;
+    line-height: 1.6;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .social-links li a {
+    text-decoration: none;
+    color: white;
+    
+  }.social-links:hover{
+    background-color: greenyellow;
+  }
+  .icones-f{
+    width: 30px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  .icones-f2{
+    width: 150px;
+    height: auto;
+    display: block;
+    margin-right: 10px;
+  }
+  .icones-cm{
+    width: 150px;
+    height: auto;
+    display: block;
+    margin-right: 10px;
+    border-color: white;
+  }
+

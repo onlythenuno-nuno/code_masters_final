@@ -1,0 +1,707 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin_logado']) || $_SESSION['admin_nivel'] != 'super') {
+    header("Location: login.php");
+    exit();
+}
+
+include 'conexao.php';
+
+// Processar adição de novo administrador
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_admin'])) {
+    $nome = trim($_POST['nome_admin']);
+    $email = trim($_POST['email_admin']);
+    $senha = trim($_POST['senha_admin']);
+    $nivel = $_POST['nivel_admin'];
+
+    // Verificar se email já existe
+    $stmt = $conn->prepare("SELECT id_admin FROM administrador WHERE email_admin = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $mensagem = "<div class='alert alert-error'>Este email já está cadastrado!</div>";
+    } else {
+        // Hash da senha (exceto para super admin)
+        $senha_hash = ($nivel == 'super') ? $senha : password_hash($senha, PASSWORD_DEFAULT);
+
+        $stmt = $conn->prepare("INSERT INTO administrador (nome_admin, email_admin, senha_admin, nivel) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $nome, $email, $senha_hash, $nivel);
+
+        if ($stmt->execute()) {
+            $mensagem = "<div class='alert alert-success'>Administrador adicionado com sucesso!</div>";
+        } else {
+            $mensagem = "<div class='alert alert-error'>Erro ao adicionar administrador.</div>";
+        }
+    }
+}
+
+// Processar remoção de administrador
+if (isset($_GET['remover_admin'])) {
+    $id_remover = $_GET['remover_admin'];
+    
+    // Não permitir remover a si mesmo
+    if ($id_remover != $_SESSION['admin_id']) {
+        $stmt = $conn->prepare("DELETE FROM administrador WHERE id_admin = ?");
+        $stmt->bind_param("i", $id_remover);
+        
+        if ($stmt->execute()) {
+            $mensagem = "<div class='alert alert-success'>Administrador removido com sucesso!</div>";
+        } else {
+            $mensagem = "<div class='alert alert-error'>Erro ao remover administrador.</div>";
+        }
+    } else {
+        $mensagem = "<div class='alert alert-error'>Você não pode remover a si mesmo.</div>";
+    }
+}
+
+// Obter lista de administradores
+$admins = $conn->query("SELECT * FROM administrador ORDER BY id_admin DESC");
+
+// Obter estatísticas
+$total_admins = $admins->num_rows;
+$total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc()['total'];
+?>
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Administradores | Painel Administrativo</title>
+    <style>
+        :root {
+            --primary: #170448;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --light: #f3e8ff;
+            --dark: #2e1065;
+            --text: #1e1b4b;
+            --text-light: #c4b5fd;
+            --white: #fff;
+            --roxo_menu: #1f0660;
+            --esverdeado: #39ff14;
+        }
+        
+        /* Estilos base (iguais ao painel_admin.php) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: var(--text);
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+        }
+        
+        .logo-section {
+            padding: 25px;
+            background-color: rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .user-profile {
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .user-profile h2 {
+            margin: 15px 0 5px;
+            font-size: 1.4em;
+            color: white;
+        }
+        
+        .menu-section {
+            padding: 15px 0;
+        }
+        
+        .menu-section h3 {
+            padding: 12px 25px;
+            margin: 0;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--secondary);
+            background-color: rgba(0,0,0,0.2);
+        }
+        
+        .menu-item {
+            padding: 14px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+            color: white;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255,255,255,0.05);
+            border-left: 3px solid var(--secondary);
+            padding-left: 30px;
+            color: var(--secondary);
+        }
+        
+        .logout-section {
+            padding: 20px;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--roxo_menu);
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-title {
+            font-size: 2em;
+            color: var(--white);
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--dark);
+            transform: translateY(-2px);
+        }
+        
+        .form-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .form-title {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        .form-control {
+            width: 95%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        
+        
+        /* Estilos específicos para esta página */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .admin-table th, .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .admin-table tr:hover {
+            background-color: #f9f5ff;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        
+        .badge-super {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .badge-admin {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-danger {
+            background-color: #f1c0c0;
+            color: #c0392b;
+            border: 1px solid #e6b0b0;
+        }
+        
+        .btn-danger:hover {
+            background-color: #e6b0b0;
+        }
+        
+        .curso-row {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .curso-row:hover {
+            background-color: #f3e8ff;
+        }
+        
+        .aulas-list {
+            display: none;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        
+        .aulas-list.active {
+            display: table-row;
+        }
+        
+        .aula-item {
+            padding: 8px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .moda-adicional{}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            
+            <div class="user-profile">
+                <h2>Bem-vindo, <?php echo htmlspecialchars($_SESSION['admin_nome']); ?></h2>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Administração</h3>
+                <a href="painel_admin.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Dashboard</div></a>
+                <div class="menu-item active">Administradores</div>
+                <a href="alunos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Alunos</div></a>
+                <a href="cursos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Cursos</div></a>
+                <a href="certificado.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Certificados</div></a>
+                <a href="eventos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Eventos</div></a>
+                <a href="suporte.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Suporte</div></a>
+            </div>
+            
+            <div class="logout-section">
+                <a href="logout.php" style="text-decoration: none; color: inherit;">
+                    <div class="logout-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Terminar Sessão
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <?php if(isset($mensagem)) echo $mensagem; ?>
+            
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Gerenciar Administradores</h1>
+                <div class="admin-actions">
+                    <button onclick="document.getElementById('modal-adicionar').style.display='block'" class="action-btn">
+                        Adicionar Administrador
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $total_admins; ?></div>
+                    <div class="stat-label">Administradores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo $total_cursos; ?></div>
+                    <div class="stat-label">Cursos Cadastrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"><?php echo date('d/m/Y'); ?></div>
+                    <div class="stat-label">Data Atual</div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="form-title">Lista de Administradores</h2>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Nível</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while($admin = $admins->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?php echo $admin['id_admin']; ?></td>
+                                    <td><?php echo htmlspecialchars($admin['nome_admin']); ?></td>
+                                    <td><?php echo htmlspecialchars($admin['email_admin']); ?></td>
+                                    <td>
+                                        <span class="badge <?php echo $admin['nivel'] == 'super' ? 'badge-super' : 'badge-admin'; ?>">
+                                            <?php echo ucfirst($admin['nivel']); ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if($admin['id_admin'] != $_SESSION['admin_id']): ?>
+                                            <a href="administradores.php?remover_admin=<?php echo $admin['id_admin']; ?>" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja remover este administrador?')">
+                                                Remover
+                                            </a>
+                                        <?php else: ?>
+                                            <span style="color: var(--text-light);">Você</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="form-title">Cursos por Administrador</h2>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Curso</th>
+                                <th>Administrador</th>
+                                <th>Data Criação</th>
+                                <th>Aulas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $cursos = $conn->query("
+                                SELECT c.id_curso, c.titulo, c.criado_em, a.nome_admin 
+                                FROM curso c
+                                JOIN administrador a ON c.admin_id = a.id_admin
+                                ORDER BY c.criado_em DESC
+                            ");
+                            
+                            while($curso = $cursos->fetch_assoc()):
+                                $aulas = $conn->query("SELECT COUNT(*) as total FROM aula WHERE id_curso = {$curso['id_curso']}")->fetch_assoc()['total'];
+                            ?>
+                                <tr class="curso-row" onclick="toggleAulas(<?php echo $curso['id_curso']; ?>)">
+                                    <td><?php echo htmlspecialchars($curso['titulo']); ?></td>
+                                    <td><?php echo htmlspecialchars($curso['nome_admin']); ?></td>
+                                    <td><?php echo date('d/m/Y', strtotime($curso['criado_em'])); ?></td>
+                                    <td><?php echo $aulas; ?></td>
+                                </tr>
+                                <tr id="aulas-<?php echo $curso['id_curso']; ?>" class="aulas-list">
+                                    <td colspan="4">
+                                        <?php
+                                        $aulas_lista = $conn->query("
+                                            SELECT * FROM aula 
+                                            WHERE id_curso = {$curso['id_curso']}
+                                            ORDER BY ordem
+                                        ");
+                                        
+                                        if ($aulas_lista->num_rows > 0):
+                                            while($aula = $aulas_lista->fetch_assoc()):
+                                        ?>
+                                            <div class="aula-item">
+                                                <strong>Aula <?php echo $aula['ordem']; ?>:</strong> 
+                                                <?php echo htmlspecialchars($aula['titulo']); ?>
+                                                <a href="<?php echo htmlspecialchars($aula['link_video']); ?>" target="_blank" style="margin-left: 10px;">
+                                                    <i class="fas fa-video"></i> Assistir
+                                                </a>
+                                            </div>
+                                        <?php
+                                            endwhile;
+                                        else:
+                                        ?>
+                                            <div class="aula-item">Nenhuma aula cadastrada para este curso.</div>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+     <!-- Modal para adicionar novo administrador -->
+<div id="modal-adicionar" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="document.getElementById('modal-adicionar').style.display='none'"></div>
+    <div class="modal-container">
+        <h2 class="modal-title">Adicionar Novo Administrador</h2>
+        
+        <form method="POST" action="administradores.php">
+            <div class="form-group">
+                <label for="nome_admin">Nome Completo</label>
+                <input type="text" id="nome_admin" name="nome_admin" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email_admin">Email</label>
+                <input type="email" id="email_admin" name="email_admin" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="senha_admin">Senha</label>
+                <input type="password" id="senha_admin" name="senha_admin" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nivel_admin">Nível de Acesso</label>
+                <select id="nivel_admin" name="nivel_admin" class="form-control" required>
+                    <option value="admin">Administrador Comum</option>
+                    <option value="super">Super Administrador</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" onclick="document.getElementById('modal-adicionar').style.display='none'" class="modal-btn modal-btn-cancel">
+                    Cancelar
+                </button>
+                <button type="submit" name="adicionar_admin" class="modal-btn modal-btn-confirm">
+                    Salvar Administrador
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Estilos para o modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        overflow: auto;
+    }
+    
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1001;
+    }
+    
+    .modal-container {
+        position: relative;
+        background-color: white;
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 8px;
+        width: 500px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 1002;
+        animation: modalFadeIn 0.3s;
+    }
+    
+    .modal-title {
+        margin-top: 0;
+        color: var(--primary);
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        font-size: 1.5em;
+    }
+    
+    .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    
+    .modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .modal-btn-cancel {
+        background-color: #f3f3f3;
+        color: #333;
+    }
+    
+    .modal-btn-confirm {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .modal-btn-confirm:hover {
+        background-color: var(--dark);
+    }
+    
+    @keyframes modalFadeIn {
+        from {opacity: 0; transform: translateY(-20px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+</style>
+
+<script>
+    // Função para mostrar o modal
+    function showAddAdminModal() {
+        document.getElementById('modal-adicionar').style.display = 'block';
+    }
+    
+    // Fechar modal ao clicar no overlay ou pressionar ESC
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('modal-adicionar') || 
+            event.target == document.querySelector('.modal-overlay')) {
+            document.getElementById('modal-adicionar').style.display = 'none';
+        }
+    };
+    
+    document.onkeydown = function(evt) {
+        evt = evt || window.event;
+        if (evt.keyCode == 27) {
+            document.getElementById('modal-adicionar').style.display = 'none';
+        }
+    };
+</script>
+    
+    <script>
+        // Função para mostrar/ocultar a lista de aulas
+        function toggleAulas(id_curso) {
+            const aulasList = document.getElementById(`aulas-${id_curso}`);
+            aulasList.classList.toggle('active');
+        }
+        
+    </script>
+</body>
+</html>

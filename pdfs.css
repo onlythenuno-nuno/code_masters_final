@@ -1,0 +1,167 @@
+body {
+   
+    background-color: #060a44;
+  font-family: "Montserrat", sans-serif;
+    
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    padding: 20px;
+    background: #09164e;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+.categorias {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 40px 0;
+}
+
+.categoria {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #00ff99;
+    border-radius: 10px;
+    transition: transform 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+}
+
+.categoria:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.linguagens {
+    display: none;
+    margin-top: 10px;
+}
+
+.linguagens a {
+    display: block;
+    color: #00ff99;
+    text-decoration: none;
+    padding: 5px;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.linguagens a:hover {
+    color: #ffaa00;
+}
+
+/* Estilização do Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.fechar {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #ff0000;
+}
+
+iframe {
+    width: 100%;
+    height: 90%;
+    border: none;
+}
+.logo-img{
+    width: 150px;
+    height: 100px;
+   }
+   header {
+    background: linear-gradient(to right, #085a2d,rgb(40, 94, 141));
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+ /* Organizacao da barra de navegacao, deixando reta. */
+nav ul {
+    list-style-type: none;
+    display: flex;
+}
+ /* margem entre as barras de navegacao */
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+ /* Efeito de mudanca de cor na barra de navegacao */
+nav ul li a:hover {
+    color: #60f774;
+}
+.user-menu {
+  position: relative;
+  display: inline-block;
+  width: 50;
+}
+
+.user-icon {
+  width: 20px;
+  cursor: pointer;
+}
+
+.user-info {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #150f0f85;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px #003366(0, 0, 0, 0.1);
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.user-menu:hover .user-info {
+  display: block;
+}
+.classificacao-icon{
+width: 25px;
+height: auto;
+vertical-align: middle;
+margin-left: 2px;
+}

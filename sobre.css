@@ -1,0 +1,149 @@
+/* Estilos adicionais para a página sobre_nos */
+.history-section, .mission-section {
+  background-color: #1f0660;
+  padding: 50px 20px;
+}
+
+.gallery-section {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.gallery-section h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.gallery-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.gallery-item {
+  background-color: #003366;
+  border: 2px solid #39ff14;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-5px);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.gallery-item p {
+  padding: 15px;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.value-card {
+  background-color: #170448;
+  border: 1px solid #39ff14;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.value-card i {
+  font-size: 2em;
+  margin-bottom: 15px;
+}
+
+.value-card h3 {
+  margin: 10px 0;
+  color: #39ff14;
+}
+
+.value-card p {
+  font-size: 0.9em;
+}
+
+.team-section {
+  background-color: #170448;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.team-section h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.team-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.team-card {
+  background-color: #003366;
+  border: 2px solid #39ff14;
+  border-radius: 10px;
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+}
+
+.team-card img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #39ff14;
+  margin-bottom: 15px;
+}
+
+.team-card h3 {
+  margin: 10px 0 5px;
+  color: white;
+}
+
+.team-card p {
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+  .history-section .container, .mission-section .container {
+    flex-direction: column;
+  }
+  
+  .history-section .imag-l, .mission-section .imag-l {
+    order: -1;
+    margin-bottom: 30px;
+  }
+  
+  .gallery-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .team-container {
+    grid-template-columns: 1fr;
+    max-width: 300px;
+  }
+}

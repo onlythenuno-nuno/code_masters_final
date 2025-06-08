@@ -1,0 +1,46 @@
+@media (max-width: 768px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    #mascote-area img {
+      width: 50px;
+      margin-top: 10px;
+    }
+  
+    .code-blocks {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .code {
+      width: 90%;
+      text-align: center;
+    }
+  
+    .dropzone {
+      min-height: auto;
+      padding: 15px;
+    }
+  
+    button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    h1 {
+      font-size: 20px;
+    }
+  
+    h2 {
+      font-size: 18px;
+    }
+  
+    .code {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+  }

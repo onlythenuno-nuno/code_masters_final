@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #170448;
+
+    color: white;
+}
+
+.container {
+    display: flex;
+    width: 900px;
+    height: 600px;
+    background: rgba(22, 9, 86, 0.9);
+
+    border-radius: 10px;
+    overflow: hidden;
+
+}
+
+.welcome-section {
+    flex: 1;
+    background: rgba(15, 3, 72, 0.679);
+
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.welcome-section h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.welcome-section p {
+    text-align: center;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.form-section,dashboard-container  {
+    flex: 1.5;
+    background: rgba(22, 9, 86, 0.9);
+
+    color: white;
+    padding: 40px;
+    width: 410px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.sign-up-form h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sign-up-form label {
+    display: block;
+    font-size: 14px;
+    margin: 10px 0 5px;
+}
+
+.sign-up-form input,
+.sign-up-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #2d2f48;
+    color: #ffffff;
+}
+
+
+.sign-up-submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #12da07;
+    border: none;
+    border-radius: 5px;
+    color: rgb(6, 7, 6);
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.sign-up-submit:hover {
+    background-color: #39ff14;
+}
+
+.logo-img {
+    width: 150px;
+    height: 100px;
+}
+
+h1 {
+    color: #39ff14;
+    transform: translateX(-100%);
+    animation: slideIn 1.5s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+.erro-box, .sucesso-box {
+    background: #ffd1d1;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ff5e5e;
+    border-radius: 5px;
+    text-align: center;
+    color: #b00000;
+}
+
+.sucesso-box {
+    background: #d1ffd9;
+    border-color: #5eff7b;
+    color: #006b1f;
+}

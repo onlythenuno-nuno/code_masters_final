@@ -1,0 +1,5 @@
+
+body { font-family: Arial; background: #111; color: #fff; padding: 20px; }
+.curso, .aula { border: 1px solid #444; padding: 15px; margin-bottom: 15px; background: #222; }
+a { color: #0f0; }
+button:disabled { background: #444; color: #999; }

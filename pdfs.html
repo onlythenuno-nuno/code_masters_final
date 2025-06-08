@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="shortcut icon" href="favicon/IMG_2517.PNG" type="image/x-icon">
+<link href="pdfs.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="logo">
+
+          <a href="index.html"><img src="index imagem/IMG_2566-removebg-preview - cópia.png" alt="logo" class="logo-img">
+           </a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="sobre.html">Sobre</a></li>
+            <li><a href="metodo.html">Nosso Método</a></li>
+            <li><a href="comunidade.html">Comunidade</a></li>
+            <li><a href="cursos.html">Cursos</a></li>
+            <li><a href="suporte.html">Suporte</a></li>
+            <div class="mode-black">
+      
+
+        </nav>
+      </header>
+      <h1 style="text-align: center; color: white;
+position: relative;
+top: 25px;">Biblioteca</h1>
+
+<section class="categorias">
+    <div class="categoria" onmouseover="mostrarLinguagens('web')" onmouseout="esconderLinguagens('web')">
+        Desenvolvimento Web
+        <div class="linguagens" id="web">
+            <a href="PDFS code Masters/Pense em Python.pdf" onclick="abrirPDF('pdfs/html.pdf')">HTML</a>
+            <a href="PDFS code Masters/Apostila-Programacao-WEB_HTML_CSS (1).pdf" onclick="abrirPDF('pdfs/css.pdf')">CSS</a>
+            <a href="PDFS code Masters/Javascript Básico ao Avançado (Kelvin Baumhardt Biffi).pdf" onclick="abrirPDF('pdfs/javascript.pdf')">JavaScript</a>
+        </div>
+    </div>
+
+    <div class="categoria" onmouseover="mostrarLinguagens('backend')" onmouseout="esconderLinguagens('backend')">
+        Backend
+        <div class="linguagens" id="backend">
+            <a href="PDFS code Masters/pdfcoffee.com_livro-php-na-pratica-2-pdf-free.pdf" onclick="abrirPDF('pdfs/php.pdf')">PHP</a>
+            <a href="#" onclick="abrirPDF('pdfs/mysql.pdf')">MySQL</a>
+            <a href="#" onclick="abrirPDF('pdfs/java.pdf')">Java</a>
+        </div>
+    </div>
+
+    <div class="categoria" onmouseover="mostrarLinguagens('programacao')" onmouseout="esconderLinguagens('programacao')">
+        Programação Geral
+        <div class="linguagens" id="programacao">
+            <a href="PDFS code Masters/Pense em Python.pdf" onclick="abrirPDF('pdfs/python.pdf')">Python</a>
+            <a href="PDFS code Masters/node.js-code masters.pdf" onclick="abrirPDF('pdfs/cpp.pdf')">C++</a>
+            <a href="#" onclick="abrirPDF('pdfs/csharp.pdf')">C#</a>
+        </div>
+    </div>
+    
+    
+</section>
+
+<!-- Janela Modal para exibir PDFs -->
+<div id="pdfModal" class="modal">
+    <div class="modal-content">
+        <span class="fechar" onclick="fecharPDF()">&times;</span>
+        <iframe id="pdfViewer" src="pdfs.html" frameborder="0"></iframe>
+    </div>
+</div>
+
+
+<script>
+    
+function mostrarLinguagens(categoria) {
+    document.getElementById(categoria).style.display = 'block';
+}
+
+function esconderLinguagens(categoria) {
+    document.getElementById(categoria).style.display = 'none';
+}
+
+function abrirPDF(url) {
+    document.getElementById('pdfViewer').src = url;
+    document.getElementById('pdfModal').style.display = 'block';
+}
+
+function fecharPDF() {
+    document.getElementById('pdfModal').style.display = 'none';
+    document.getElementById('pdfViewer').src = "";
+}
+
+    
+</script>
+</body>
+</html>
+
