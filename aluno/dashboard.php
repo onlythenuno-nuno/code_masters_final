@@ -53,6 +53,8 @@ $aluno_id = $_SESSION['id'];
             padding: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             font-size: 1.1rem;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
 
         .logo-section {
@@ -143,6 +145,7 @@ $aluno_id = $_SESSION['id'];
             flex: 1;
             padding: 20px;
             background-color: var(--light);
+            transition: margin-left 0.3s ease;
         }
 
         .dashboard-header {
@@ -259,74 +262,67 @@ $aluno_id = $_SESSION['id'];
             50% { opacity: 0; }
             }
 
+        /* Estilo melhorado para o hamburguer */
         .hamburger {
-        display: none;
-        font-size: 26px;
-        background: none;
-        border: none;
-        color: var(--text);
-        padding: 15px 20px;
-        cursor: pointer;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 999;
-    }
-
-    /* NOVO: Sidebar como sobreposição para mobile */
-    .sidebar {
-        transition: transform 0.3s ease;
-    }
-
-    .sidebar.collapsed {
-        transform: translateX(-100%);
-        position: fixed;
-        height: 100vh;
-        z-index: 998;
-    }
-
-    .overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(230, 3, 3, 0);
-        z-index: 997;
-    }
-
-    .overlay.active {
-        display: block;
-    }
-
-    /* NOVO: Responsividade */
-    @media (max-width: 768px) {
-        .container {
-            flex-direction: column;
+            display: none;
+            font-size: 26px;
+            background: var(--secondary);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 999;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
         }
 
-        .hamburger {
-            display: block;
+        .hamburger:hover {
+            background: var(--dark);
+            transform: scale(1.05);
         }
 
-        .sidebar {
-            width: 250px;
+        .overlay {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
-            transform: translateX(-100%);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
         }
 
-        .sidebar.active {
-            transform: translateX(0);
-        }
+        /* NOVO: Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+            }
 
-        .main-content {
-            margin-top: 60px;
-            padding: 20px;
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-top: 70px;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .overlay.active {
+                display: block;
+            }
         }
-    }
     </style>
 </head>
 <body>
@@ -342,8 +338,6 @@ $aluno_id = $_SESSION['id'];
                 <a href="../quiz/index.html" style="text-decoration: none;"><div class="menu-item">Quiz</div></a>
                 <a href="../index.php" style="text-decoration: none;"><div class="menu-item">Página Principal</div></a>
             </div>
-
-            <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
             
             <div class="logout-section">
                 <a href="logout.php" style="text-decoration: none;">
@@ -358,6 +352,8 @@ $aluno_id = $_SESSION['id'];
                 </a>
             </div>
         </div>
+
+        <div class="overlay" id="overlay"></div>
 
         <div class="main-content">
             <button class="hamburger" onclick="toggleSidebar()">☰</button>
@@ -409,11 +405,21 @@ $aluno_id = $_SESSION['id'];
         }
 
         function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.getElementById('overlay');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Impede a rolagem do corpo quando a sidebar está aberta
+            if (sidebar.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         }
+
+        // Fechar a sidebar ao clicar no overlay
+        document.getElementById('overlay').addEventListener('click', toggleSidebar);
 
         digitar();
     </script>

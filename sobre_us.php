@@ -26,7 +26,7 @@ header {
   background-color: #1f0660;
   width: 100%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  padding: 1px 0;
+  padding: 4px 0;
 }
 
 /* Container do menu */
@@ -34,7 +34,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 20px;
+  padding: 0px 20px;
   max-width: 1400px;
   margin: 0 auto;
   
@@ -42,8 +42,7 @@ header {
 
 /* Logo */
 .logo-img {
-  height: 30px;
-  width: auto;
+  width: 130px;
 }
 
 /* Lista de itens do menu */
@@ -59,7 +58,7 @@ header {
 .nav-list a {
   color: white;
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   transition: color 0.3s;
   font-weight: 500;
 }

@@ -33,7 +33,7 @@ session_start();
     header {
       background-color: #1f0660;
       width: 100%;
-      padding: 0px 0;
+      padding: 4px 0;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -42,15 +42,14 @@ session_start();
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 20px;
+      padding: 0px 20px;
       max-width: 1400px;
       margin: 0 auto;
     }
 
     /* Logo */
     .logo-img {
-      height: 30px;
-      width: auto;
+      width: 130px;
     }
 
     /* Lista de itens do menu */
@@ -66,7 +65,7 @@ session_start();
     .nav-list a {
       color: white;
       text-decoration: none;
-      font-size: 1rem;
+      font-size: 1.1rem;
       transition: color 0.3s;
       font-weight: 500;
     }
@@ -142,7 +141,7 @@ session_start();
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap; 
-    padding: 4rem 5%;
+    padding: 2rem 2%;
     
 }
 .container{
@@ -156,6 +155,16 @@ session_start();
 .imag-l img {
     max-width: 100%; 
     height: auto;
+}
+
+.container > h2{
+  padding-bottom: 10px;
+}
+
+p{
+  padding: 20px 0;
+  font-size: 1.2rem;
+  text-align: start;
 }
 
 @media (max-width: 1000px) {
@@ -173,7 +182,7 @@ session_start();
   grid-template-columns: repeat(4, 1fr); 
   gap: 1.5rem;
   padding: 1rem;
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -384,6 +393,82 @@ button{
   }
 
 
+  /* Modal Styles - Estilo igual ao print */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: #170448;
+  margin: 15% auto;
+  padding: 20px;
+  border: 2px solid #39ff14;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #39ff14;
+}
+
+.modal-message {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-button {
+  padding: 3px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.modal-button.cancel {
+  background-color: transparent;
+  color: white;
+  border: 2px solid #ff3333;
+}
+
+.modal-button.cancel:hover {
+  background-color: #ff3333;
+  color: white;
+}
+
+.modal-button.confirm {
+  background-color: #39ff14;
+  color: #170448;
+  border: 2px solid #39ff14;
+}
+
+.modal-button.confirm:hover {
+  background-color: #170448;
+  color: #39ff14;
+  box-shadow: 0 0 10px #39ff14;
+}
+
+
 
   </style>
 </head>
@@ -445,8 +530,7 @@ button{
   </section>
   
   <h1 style="text-align: center; color: white;
-position: relative;
-top: -25px;">DISPONIVEIS NO NOSSO SITE</h1>
+position: relative; border-top: 30px;">DISPONIVEIS NO NOSSO SITE</h1>
 
 
   <div class="container">
@@ -574,42 +658,64 @@ top: -25px;">DISPONIVEIS NO NOSSO SITE</h1>
       });
     });
 
-    // Mantenha suas funções JavaScript existentes
-    function verificarSuporte() {
-      <?php if (isset($_SESSION['nome_aluno'])): ?>
-        window.location.href = 'suporte/suporte.php';
-      <?php else: ?>
-        alert('Para acessar aqui, você primeiro precisa fazer login.');
-        window.location.href = 'aluno/login.php';
-      <?php endif; ?>
-    }
+    // Funções para o modal
+function showModal(title, message) {
+  const modalTitle = document.querySelector('.modal-title');
+  const modalMessage = document.querySelector('.modal-message');
+  
+  modalTitle.textContent = title || 'Confirmar Acesso';
+  modalMessage.textContent = message || 'Tem certeza que deseja acessar esta área? Você precisa estar logado.';
+  document.getElementById('loginModal').style.display = 'block';
+}
 
-    function verificarCursos() {
-      <?php if (isset($_SESSION['nome_aluno'])): ?>
-        window.location.href = 'gerenciamento/cursos.php';
-      <?php else: ?>
-        alert('Para acessar aqui, você primeiro precisa fazer login.');
-        window.location.href = 'aluno/login.php';
-      <?php endif; ?>
-    }
+function closeModal() {
+  document.getElementById('loginModal').style.display = 'none';
+}
 
-    function verificarCertificados() {
-      <?php if (isset($_SESSION['nome_aluno'])): ?>
-        window.location.href = 'certificado.php';
-      <?php else: ?>
-        alert('Para acessar aqui, você primeiro precisa fazer login.');
-        window.location.href = 'aluno/login.php';
-      <?php endif; ?>
-    }
+function redirectToLogin() {
+  window.location.href = 'aluno/login.php';
+}
 
-    function verificarEventos() {
-      <?php if (isset($_SESSION['nome_aluno'])): ?>
-        window.location.href = 'aluno/eventos.php';
-      <?php else: ?>
-        alert('Para acessar aqui, você primeiro precisa fazer login.');
-        window.location.href = 'aluno/login.php';
-      <?php endif; ?>
-    }
+// Funções de verificação atualizadas
+function verificarSuporte() {
+  <?php if (isset($_SESSION['nome_aluno'])): ?>
+    window.location.href = 'suporte/suporte.php';
+  <?php else: ?>
+    showModal('Acesso ao Suporte', 'Para acessar o Suporte, você precisa fazer login.');
+  <?php endif; ?>
+}
+
+function verificarCursos() {
+  <?php if (isset($_SESSION['nome_aluno'])): ?>
+    window.location.href = 'gerenciamento/cursos.php';
+  <?php else: ?>
+    showModal('Acesso aos Cursos', 'Para acessar os Cursos, você precisa fazer login.');
+  <?php endif; ?>
+}
+
+function verificarCertificados() {
+  <?php if (isset($_SESSION['nome_aluno'])): ?>
+    window.location.href = 'certificado.php';
+  <?php else: ?>
+    showModal('Acesso aos Certificados', 'Para acessar os Certificados, você precisa fazer login.');
+  <?php endif; ?>
+}
+
+function verificarEventos() {
+  <?php if (isset($_SESSION['nome_aluno'])): ?>
+    window.location.href = 'aluno/eventos.php';
+  <?php else: ?>
+    showModal('Acesso aos Eventos', 'Para acessar os Eventos, você precisa fazer login.');
+  <?php endif; ?>
+}
+
+// Fechar o modal se clicar fora dele
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('loginModal');
+  if (event.target === modal) {
+    closeModal();
+  }
+});
 
     document.querySelectorAll('.item').forEach(item => {
       const info = item.querySelector('.curso-info');
@@ -623,6 +729,20 @@ top: -25px;">DISPONIVEIS NO NOSSO SITE</h1>
           info.style.display = 'none';
       });
     });
+
   </script>
+
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <h3 class="modal-title">Confirmar Acesso</h3>
+    <p class="modal-message">Tem certeza que deseja acessar esta área? Você precisa estar logado.</p>
+    <div class="modal-buttons">
+      <button class="modal-button confirm" onclick="redirectToLogin()">Fazer Login</button>
+      <button class="modal-button cancel" onclick="closeModal()">Cancelar</button>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

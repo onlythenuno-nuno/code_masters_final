@@ -283,7 +283,7 @@ if (isset($_POST['enviar'])) {
         <div class="welcome-section">
             <h1>Problemas para entrar?</h1>
             <p>Digite seu email e enviaremos um código de verificação para você redefinir sua senha.</p>
-            <a href="login.php" class="back-btn">Voltar ao login</a>
+            <a href="../login.php" class="back-btn">Voltar ao login</a>
         </div>
         
         <div class="login-section">

@@ -84,7 +84,6 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
             --esverdeado: #39ff14;
         }
         
-        /* Estilos base (iguais ao painel_admin.php) */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -250,10 +249,7 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
             font-weight: 500;
             transition: all 0.3s;
         }
-
         
-        
-        /* Estilos específicos para esta página */
         .stats-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -382,13 +378,93 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
             color: #721c24;
         }
 
-        .moda-adicional{}
+        /* Estilos para os modais */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            overflow: auto;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+        
+        .modal-container {
+            position: relative;
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1002;
+            animation: modalFadeIn 0.3s;
+        }
+        
+        .modal-title {
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        #modal-message {
+            margin: 20px 0;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn-cancel {
+            background-color: #f3f3f3;
+            color: #333;
+        }
+        
+        .modal-btn-confirm {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .modal-btn-confirm:hover {
+            background-color: var(--dark);
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            
             <div class="user-profile">
                 <h2>Bem-vindo, <?php echo htmlspecialchars($_SESSION['admin_nome']); ?></h2>
             </div>
@@ -472,7 +548,9 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
                                     </td>
                                     <td>
                                         <?php if($admin['id_admin'] != $_SESSION['admin_id']): ?>
-                                            <a href="administradores.php?remover_admin=<?php echo $admin['id_admin']; ?>" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja remover este administrador?')">
+                                            <a href="administradores.php?remover_admin=<?php echo $admin['id_admin']; ?>" 
+                                               class="btn btn-danger" 
+                                               onclick="return confirmarExclusao(this.href)">
                                                 Remover
                                             </a>
                                         <?php else: ?>
@@ -552,148 +630,65 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
         </div>
     </div>
     
-     <!-- Modal para adicionar novo administrador -->
-<div id="modal-adicionar" class="modal" style="display:none;">
-    <div class="modal-overlay" onclick="document.getElementById('modal-adicionar').style.display='none'"></div>
-    <div class="modal-container">
-        <h2 class="modal-title">Adicionar Novo Administrador</h2>
-        
-        <form method="POST" action="administradores.php">
-            <div class="form-group">
-                <label for="nome_admin">Nome Completo</label>
-                <input type="text" id="nome_admin" name="nome_admin" class="form-control" required>
-            </div>
+    <!-- Modal para adicionar novo administrador -->
+    <div id="modal-adicionar" class="modal" style="display:none;">
+        <div class="modal-overlay" onclick="document.getElementById('modal-adicionar').style.display='none'"></div>
+        <div class="modal-container">
+            <h2 class="modal-title">Adicionar Novo Administrador</h2>
             
-            <div class="form-group">
-                <label for="email_admin">Email</label>
-                <input type="email" id="email_admin" name="email_admin" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="senha_admin">Senha</label>
-                <input type="password" id="senha_admin" name="senha_admin" class="form-control" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="nivel_admin">Nível de Acesso</label>
-                <select id="nivel_admin" name="nivel_admin" class="form-control" required>
-                    <option value="admin">Administrador Comum</option>
-                    <option value="super">Super Administrador</option>
-                </select>
-            </div>
+            <form method="POST" action="administradores.php">
+                <div class="form-group">
+                    <label for="nome_admin">Nome Completo</label>
+                    <input type="text" id="nome_admin" name="nome_admin" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_admin">Email</label>
+                    <input type="email" id="email_admin" name="email_admin" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha_admin">Senha</label>
+                    <input type="password" id="senha_admin" name="senha_admin" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nivel_admin">Nível de Acesso</label>
+                    <select id="nivel_admin" name="nivel_admin" class="form-control" required>
+                        <option value="admin">Administrador Comum</option>
+                        <option value="super">Super Administrador</option>
+                    </select>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" onclick="document.getElementById('modal-adicionar').style.display='none'" class="modal-btn modal-btn-cancel">
+                        Cancelar
+                    </button>
+                    <button type="submit" name="adicionar_admin" class="modal-btn modal-btn-confirm">
+                        Salvar Administrador
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação para Exclusão -->
+    <div id="modal-confirmacao" class="modal" style="display:none;">
+        <div class="modal-overlay" onclick="document.getElementById('modal-confirmacao').style.display='none'"></div>
+        <div class="modal-container">
+            <h2 class="modal-title">Confirmar Exclusão</h2>
+            <p id="modal-message">Tem certeza que deseja remover este administrador? Esta ação não pode ser desfeita.</p>
             
             <div class="modal-actions">
-                <button type="button" onclick="document.getElementById('modal-adicionar').style.display='none'" class="modal-btn modal-btn-cancel">
+                <button onclick="document.getElementById('modal-confirmacao').style.display='none'" class="modal-btn modal-btn-cancel">
                     Cancelar
                 </button>
-                <button type="submit" name="adicionar_admin" class="modal-btn modal-btn-confirm">
-                    Salvar Administrador
+                <button id="confirmar-exclusao" class="modal-btn modal-btn-confirm">
+                    Confirmar
                 </button>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<style>
-    /* Estilos para o modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-        overflow: auto;
-    }
-    
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 1001;
-    }
-    
-    .modal-container {
-        position: relative;
-        background-color: white;
-        margin: 5% auto;
-        padding: 30px;
-        border-radius: 8px;
-        width: 500px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        z-index: 1002;
-        animation: modalFadeIn 0.3s;
-    }
-    
-    .modal-title {
-        margin-top: 0;
-        color: var(--primary);
-        border-bottom: 1px solid #eee;
-        padding-bottom: 15px;
-        font-size: 1.5em;
-    }
-    
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
-    }
-    
-    .modal-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.3s;
-    }
-    
-    .modal-btn-cancel {
-        background-color: #f3f3f3;
-        color: #333;
-    }
-    
-    .modal-btn-confirm {
-        background-color: var(--primary);
-        color: white;
-    }
-    
-    .modal-btn-confirm:hover {
-        background-color: var(--dark);
-    }
-    
-    @keyframes modalFadeIn {
-        from {opacity: 0; transform: translateY(-20px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-</style>
-
-<script>
-    // Função para mostrar o modal
-    function showAddAdminModal() {
-        document.getElementById('modal-adicionar').style.display = 'block';
-    }
-    
-    // Fechar modal ao clicar no overlay ou pressionar ESC
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('modal-adicionar') || 
-            event.target == document.querySelector('.modal-overlay')) {
-            document.getElementById('modal-adicionar').style.display = 'none';
-        }
-    };
-    
-    document.onkeydown = function(evt) {
-        evt = evt || window.event;
-        if (evt.keyCode == 27) {
-            document.getElementById('modal-adicionar').style.display = 'none';
-        }
-    };
-</script>
     
     <script>
         // Função para mostrar/ocultar a lista de aulas
@@ -702,6 +697,41 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
             aulasList.classList.toggle('active');
         }
         
+        // Funções para os modais
+        let urlExclusao = '';
+        
+        function confirmarExclusao(url) {
+            urlExclusao = url;
+            document.getElementById('modal-confirmacao').style.display = 'block';
+            return false;
+        }
+        
+        document.getElementById('confirmar-exclusao').addEventListener('click', function() {
+            window.location.href = urlExclusao;
+        });
+        
+        // Fechar modais ao clicar no overlay ou pressionar ESC
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        };
+        
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 27) {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        };
+        
+        // Função para mostrar o modal de adicionar administrador
+        function showAddAdminModal() {
+            document.getElementById('modal-adicionar').style.display = 'block';
+        }
     </script>
 </body>
 </html>
