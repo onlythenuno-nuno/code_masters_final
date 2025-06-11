@@ -7,52 +7,47 @@ if (!isset($_SESSION['admin_logado'])) {
 
 include 'conexao.php';
 
-// ------------------------
-// PROCESSAR REMOÇÃO (SOFT DELETE)
-// ------------------------
+// -----------------------------
+// Processar reativação de aluno
+// -----------------------------
 if (isset($_GET['remover']) && is_numeric($_GET['remover'])) {
     $id_aluno = $_GET['remover'];
 
-    // Verificar se o aluno existe
-    $stmt = $conn->prepare("SELECT * FROM aluno WHERE id_aluno = ? AND ativo = 1");
+    $stmt = $conn->prepare("SELECT * FROM aluno WHERE id_aluno = ? AND ativo = 0");
     $stmt->bind_param("i", $id_aluno);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // Soft delete: marcar como inativo
-        $stmt = $conn->prepare("UPDATE aluno SET ativo = 0 WHERE id_aluno = ?");
+        $stmt = $conn->prepare("UPDATE aluno SET ativo = 1 WHERE id_aluno = ?");
         $stmt->bind_param("i", $id_aluno);
-
         if ($stmt->execute()) {
-            $mensagem = "Aluno removido com sucesso!";
-            header("Location: alunos.php?mensagem=" . urlencode($mensagem));
+            $mensagem = "Aluno reativado com sucesso!";
+            header("Location: alunos_inativos.php?mensagem=" . urlencode($mensagem));
             exit();
         } else {
-            $erro = "Erro ao remover aluno.";
+            $erro = "Erro ao reativar aluno.";
         }
     } else {
-        $erro = "Aluno não encontrado.";
+        $erro = "Aluno não encontrado ou já está ativo.";
     }
 }
 
-// ------------------------
-// FILTROS DE PESQUISA
-// ------------------------
+// -----------------------------
+// Filtros de busca
+// -----------------------------
 $filtro_nome  = isset($_GET['nome'])  ? $_GET['nome']  : '';
 $filtro_email = isset($_GET['email']) ? $_GET['email'] : '';
 
-// ------------------------
-// PAGINAÇÃO
-// ------------------------
+// -----------------------------
+// Paginação
+// -----------------------------
 $registros_por_pagina = 40;
 $pagina_atual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 if ($pagina_atual < 1) $pagina_atual = 1;
 
-// ------------------------
-// CLAÚSULA WHERE (COM FILTROS + ATIVO)
-// ------------------------
-$where = "WHERE ativo = 1"; 
+// WHERE para somente inativos
+$where = "WHERE ativo = 0";
 if (!empty($filtro_nome)) {
     $nome_filtrado = mysqli_real_escape_string($conn, $filtro_nome);
     $where .= " AND nome_aluno LIKE '%$nome_filtrado%'";
@@ -62,9 +57,7 @@ if (!empty($filtro_email)) {
     $where .= " AND email_aluno LIKE '%$email_filtrado%'";
 }
 
-// ------------------------
-// TOTAL DE REGISTROS PARA PAGINAÇÃO
-// ------------------------
+// Contagem
 $query_count = "SELECT COUNT(*) as total FROM aluno $where";
 $result_count = mysqli_query($conn, $query_count);
 $total_registros = mysqli_fetch_assoc($result_count)['total'];
@@ -74,9 +67,7 @@ if ($pagina_atual > $total_paginas && $total_paginas > 0) {
 }
 $offset = ($pagina_atual - 1) * $registros_por_pagina;
 
-// ------------------------
-// CONSULTA FINAL DE ALUNOS
-// ------------------------
+// Consulta final
 $query = "SELECT * FROM aluno $where ORDER BY criado_em DESC LIMIT $offset, $registros_por_pagina";
 $alunos = mysqli_query($conn, $query);
 ?>
@@ -173,7 +164,7 @@ $alunos = mysqli_query($conn, $query);
         .menu-item:hover, .menu-item.active {
             background-color: rgba(255,255,255,0.05);
             border-left: 3px solid var(--secondary);
-            padding-left: 30px;
+            padding-left: 60px;
             color: var(--secondary);
         }
 
@@ -249,8 +240,8 @@ $alunos = mysqli_query($conn, $query);
         }
         
         .action-btn.delete-btn {
-            background-color: #f1c0c0;
-            color: #c0392b;
+            background-color:rgb(21, 179, 58);
+            color:rgb(255, 255, 255);
         }
         
         .action-btn.delete-btn:hover {
@@ -485,8 +476,8 @@ $alunos = mysqli_query($conn, $query);
                 <h3>Administração</h3>
                 <a href="painel_admin.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Dashboard</div></a>
                 <a href="administradores.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Administradores</div></a>
-                <div class="menu-item active">Alunos</div>
-                <a href="alunos_inativos.php" style="text-decoration: none; color: inherit;"><div class="menu-item inativo">Alunos Desativados</div></a>
+                <a href="alunos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Alunos</div></a>
+                <div class="menu-item inativo active">Alunos Desativados</div>
                 <a href="cursos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Cursos</div></a>
                 <a href="certificado.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Certificados</div></a>
                 <a href="eventos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Eventos</div></a>
@@ -523,7 +514,7 @@ $alunos = mysqli_query($conn, $query);
             
             <div class="search-filters">
                 <h2 class="form-title">Pesquisar Alunos</h2>
-                <form method="GET" action="alunos.php">
+                <form method="GET" action="alunos_inativos.php">
                     <div class="filter-row">
                         <div class="filter-group">
                             <label for="nome">Nome do Aluno</label>
@@ -535,7 +526,7 @@ $alunos = mysqli_query($conn, $query);
                         </div>
                     </div>
                     <button type="submit" class="submit-btn">Pesquisar</button>
-                    <a href="alunos.php" class="action-btn secondary" style="margin-left: 10px;">Limpar Filtros</a>
+                    <a href="alunos_inativos.php" class="action-btn secondary" style="margin-left: 10px;">Limpar Filtros</a>
                 </form>
             </div>
             
@@ -567,8 +558,8 @@ $alunos = mysqli_query($conn, $query);
                                     echo '<td>' . htmlspecialchars($aluno['email_aluno']) . '</td>';
                                     echo '<td>' . $aluno['criado_em'] . '</td>';
                                     echo '<td class="actions-cell">';
-                                    echo '<a href="perfil_aluno.php?id=' . $aluno['id_aluno'] . '" class="action-btn view-btn">Ver Perfil</a>';
-                                    echo '<a href="#" onclick="confirmarExclusao(' . $aluno['id_aluno'] . ')" class="action-btn delete-btn small">Desativar Conta</a>';
+                                    echo '<a href="perfil_aluno_desativado.php?id=' . $aluno['id_aluno'] . '" class="action-btn view-btn">Ver Perfil</a>';
+                                    echo '<a href="#" onclick="confirmarExclusao(' . $aluno['id_aluno'] . ')" class="action-btn delete-btn small">Reactivar</a>';
                                     echo '</td>';
                                     echo '</tr>';
                                 }
@@ -597,7 +588,7 @@ $alunos = mysqli_query($conn, $query);
                     $fim = min($total_paginas, $pagina_atual + 2);
                     
                     if ($inicio > 1) {
-                        echo '<a href="alunos.php?pagina=1'.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">1</a>';
+                        echo '<a href="alunos_inativos.php?pagina=1'.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">1</a>';
                         if ($inicio > 2) echo '<span>...</span>';
                     }
                     
@@ -605,18 +596,18 @@ $alunos = mysqli_query($conn, $query);
                         if ($i == $pagina_atual) {
                             echo '<span class="current">'.$i.'</span>';
                         } else {
-                            echo '<a href="alunos.php?pagina='.$i.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">'.$i.'</a>';
+                            echo '<a href="alunos_inativos.php?pagina='.$i.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">'.$i.'</a>';
                         }
                     }
                     
                     if ($fim < $total_paginas) {
                         if ($fim < $total_paginas - 1) echo '<span>...</span>';
-                        echo '<a href="alunos.php?pagina='.$total_paginas.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">'.$total_paginas.'</a>';
+                        echo '<a href="alunos_inativos.php?pagina='.$total_paginas.(!empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : '').(!empty($filtro_email) ? '&email='.urlencode($filtro_email) : '').'">'.$total_paginas.'</a>';
                     }
                     ?>
                     
                     <?php if ($pagina_atual < $total_paginas): ?>
-                        <a href="alunos.php?pagina=<?php echo $pagina_atual + 1; ?><?php echo !empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : ''; ?><?php echo !empty($filtro_email) ? '&email='.urlencode($filtro_email) : ''; ?>">&rsaquo;</a>
+                        <a href="alunos_inativos.php?pagina=<?php echo $pagina_atual + 1; ?><?php echo !empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : ''; ?><?php echo !empty($filtro_email) ? '&email='.urlencode($filtro_email) : ''; ?>">&rsaquo;</a>
                         <a href="alunos.php?pagina=<?php echo $total_paginas; ?><?php echo !empty($filtro_nome) ? '&nome='.urlencode($filtro_nome) : ''; ?><?php echo !empty($filtro_email) ? '&email='.urlencode($filtro_email) : ''; ?>">&raquo;</a>
                     <?php else: ?>
                         <span class="disabled">&rsaquo;</span>
@@ -632,7 +623,7 @@ $alunos = mysqli_query($conn, $query);
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <h3>Confirmar Exclusão</h3>
-            <p>Tem certeza que deseja remover este aluno? Esta ação não pode ser desfeita.</p>
+            <p>Tem certeza que deseja reativar este aluno?</p>
             <div class="modal-actions">
                 <button onclick="fecharModal()" class="action-btn cancel-btn">Cancelar</button>
                 <button id="confirmDeleteBtn" class="action-btn confirm-btn">Confirmar</button>
@@ -650,7 +641,7 @@ $alunos = mysqli_query($conn, $query);
             
             // Configurar o botão de confirmação
             confirmBtn.onclick = function() {
-                window.location.href = 'alunos.php?remover=' + idAluno;
+                window.location.href = 'alunos_inativos.php?remover=' + idAluno;
             };
         }
         
