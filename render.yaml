@@ -1,8 +1,6 @@
 services:
   - type: web
-    name: meu-sistema
-    env: php
+    name: code_masters_final
+    env: docker
     plan: free
-    buildCommand: ""
-    startCommand: ""
-    staticPublishPath: .
+    dockerfilePath: ./Dockerfile
