@@ -9,6 +9,7 @@ if (isset($_POST['cadastrar'])) {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+    $ativo = 1;
 
     $stmt = $conn->prepare("SELECT id_aluno FROM aluno WHERE email_aluno = ?");
     $stmt->bind_param("s", $email);
@@ -18,8 +19,8 @@ if (isset($_POST['cadastrar'])) {
     if ($stmt->num_rows > 0) {
         $erro = "Este email já está associado a uma conta.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO aluno (nome_aluno, email_aluno, senha_aluno) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $nome, $email, $senha);
+        $stmt = $conn->prepare("INSERT INTO aluno (nome_aluno, email_aluno, senha_aluno, ativo) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $nome, $email, $senha, $ativo);
 
         if ($stmt->execute()) {
             $sucesso = "Cadastro realizado com sucesso! <a href='login.php' style='color: var(--secondary);'>Fazer login</a>";

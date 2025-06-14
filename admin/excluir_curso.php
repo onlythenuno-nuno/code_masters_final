@@ -1,23 +1,24 @@
 <?php
 include 'conexao.php';
 
-
 if (isset($_GET['id'])) {
-    $curso_id = (int) $_GET['id']; 
+    $curso_id = (int) $_GET['id'];
 
-    
-    mysqli_query($conn, "DELETE FROM aula WHERE id_curso = $curso_id");
+    // Soft delete das aulas relacionadas (se tiver campo 'ativo')
+    mysqli_query($conn, "UPDATE aula SET ativo = 0 WHERE id_curso = $curso_id");
 
-    mysqli_query($conn, "DELETE FROM inscricao WHERE id_curso = $curso_id");
+    // Soft delete das inscrições relacionadas (se tiver campo 'ativo')
+    mysqli_query($conn, "UPDATE inscricao SET ativo = 0 WHERE id_curso = $curso_id");
 
-    $query = "DELETE FROM curso WHERE id_curso = $curso_id";
+    // Soft delete do curso
+    $query = "UPDATE curso SET ativo = 0 WHERE id_curso = $curso_id";
     $resultado = mysqli_query($conn, $query);
 
     if ($resultado) {
-        echo "Curso excluído com sucesso.";
-        header("location: painel_admin.php");
+        header("Location: painel_admin.php?mensagem=Curso+removido+com+sucesso");
+        exit();
     } else {
-        echo "Erro ao excluir o curso: " . mysqli_error($conn);
+        echo "Erro ao remover o curso: " . mysqli_error($conn);
     }
 } else {
     echo "ID do curso não foi especificado.";

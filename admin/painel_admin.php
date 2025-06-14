@@ -470,33 +470,40 @@ if (isset($_GET['mensagem'])) {
                 <h2 class="form-title">Cursos Existentes</h2>
                 
                 <div class="courses-grid">
-                    <?php
-                    $cursos = mysqli_query($conn, "SELECT c.id_curso, c.titulo, c.descricao, 
-                                                 COUNT(DISTINCT a.id_aula) as num_aulas, 
-                                                 COUNT(DISTINCT i.id_inscricao) as num_inscritos
-                                          FROM curso c
-                                          LEFT JOIN aula a ON c.id_curso = a.id_curso
-                                          LEFT JOIN inscricao i ON c.id_curso = i.id_curso
-                                          GROUP BY c.id_curso");
-                    
-                    if (mysqli_num_rows($cursos) > 0) {
-                        while ($curso = mysqli_fetch_assoc($cursos)) {
-                            echo '<div class="course-card">';
-                            echo '<h3 class="course-title">' . htmlspecialchars($curso['titulo']) . '</h3>';
-                            echo '<div class="course-meta">';
-                            echo '<span>' . $curso['num_aulas'] . ' Aulas</span>';
-                            echo '<span>' . $curso['num_inscritos'] . ' Inscritos</span>';
-                            echo '</div>';
-                            echo '<div class="course-actions">';
-                            echo '<a href="editar_curso.php?id=' . $curso['id_curso'] . '" class="course-btn edit-btn">Editar</a>';
-                            echo '<a href="excluir_curso.php?id=' . $curso['id_curso'] . '" class="course-btn delete-btn">Remover</a>';
-                            echo '</div>';
-                            echo '</div>';
-                        }
-                    } else {
-                        echo '<p>Nenhum curso cadastrado.</p>';
-                    }
-                    ?>
+<?php
+$cursos = mysqli_query($conn, "
+    SELECT 
+        c.id_curso, 
+        c.titulo, 
+        c.descricao, 
+        COUNT(DISTINCT a.id_aula) AS num_aulas, 
+        COUNT(DISTINCT i.id_inscricao) AS num_inscritos
+    FROM curso c
+    LEFT JOIN aula a ON c.id_curso = a.id_curso AND a.ativo = 1
+    LEFT JOIN inscricao i ON c.id_curso = i.id_curso AND i.ativo = 1
+    WHERE c.ativo = 1
+    GROUP BY c.id_curso
+");
+
+if (mysqli_num_rows($cursos) > 0) {
+    while ($curso = mysqli_fetch_assoc($cursos)) {
+        echo '<div class="course-card">';
+        echo '<h3 class="course-title">' . htmlspecialchars($curso['titulo']) . '</h3>';
+        echo '<div class="course-meta">';
+        echo '<span>' . $curso['num_aulas'] . ' Aulas</span>';
+        echo '<span>' . $curso['num_inscritos'] . ' Inscritos</span>';
+        echo '</div>';
+        echo '<div class="course-actions">';
+        echo '<a href="editar_curso.php?id=' . $curso['id_curso'] . '" class="course-btn edit-btn">Editar</a>';
+        echo '<a href="excluir_curso.php?id=' . $curso['id_curso'] . '" class="course-btn delete-btn">Remover</a>';
+        echo '</div>';
+        echo '</div>';
+    }
+} else {
+    echo '<p>Nenhum curso cadastrado.</p>';
+}
+?>
+
                 </div>
             </div>
             

@@ -13,9 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descricao = mysqli_real_escape_string($conn, $_POST['descricao']);
     $data = mysqli_real_escape_string($conn, $_POST['data_evento']);
     $local = mysqli_real_escape_string($conn, $_POST['local_evento']);
+    $ativo = 1;
 
-    $conn->query("INSERT INTO eventos (titulo, descricao, data_evento, local_evento)
-                  VALUES ('$titulo', '$descricao', '$data', '$local')");
+    $conn->query("INSERT INTO eventos (titulo, descricao, data_evento, local_evento, ativo)
+                  VALUES ('$titulo', '$descricao', '$data', '$local', '$ativo')");
     
     header("Location: eventos.php?sucesso=Evento+cadastrado+com+sucesso");
     exit();
@@ -24,14 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Remover evento
 if (isset($_GET['remover'])) {
     $id = intval($_GET['remover']);
-    $conn->query("DELETE FROM eventos_participantes WHERE id_eventos = $id");
-    $conn->query("DELETE FROM eventos WHERE id_eventos = $id");
+    $conn->query("UPDATE eventos_participantes SET ativo = 0 WHERE id_eventos = $id");
+    $conn->query("UPDATE eventos SET ativo = 0 WHERE id_eventos = $id");
     
     header("Location: eventos.php?sucesso=Evento+removido+com+sucesso");
     exit();
 }
 
-$eventos = $conn->query("SELECT * FROM eventos ORDER BY data_evento DESC");
+$eventos = $conn->query("SELECT * FROM eventos WHERE ativo = 1 ORDER BY data_evento DESC");
 ?>
 
 <!DOCTYPE html>

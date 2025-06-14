@@ -8,11 +8,12 @@ if (!isset($_SESSION['admin_logado'])) {
 include 'conexao.php';
 
 // Buscar estatísticas
-$total_cursos = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM curso"))['total'];
+$total_cursos = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM curso where ativo = 1"))['total'];
 $total_alunos = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(DISTINCT id_aluno) as total FROM inscricao"))['total'];
 $curso_popular = mysqli_fetch_assoc(mysqli_query($conn, 
     "SELECT c.titulo, COUNT(i.id_inscricao) as inscritos 
-     FROM curso c LEFT JOIN inscricao i ON c.id_curso = i.id_curso 
+     FROM curso c  LEFT JOIN inscricao i ON c.id_curso = i.id_curso
+     WHERE c.ativo = 1
      GROUP BY c.id_curso ORDER BY inscritos DESC LIMIT 1"));
 
 // Pegar 3 cursos com mais inscritos
@@ -20,6 +21,7 @@ $cursos_populares = mysqli_query($conn,
     "SELECT c.*, COUNT(i.id_inscricao) as total_inscritos 
      FROM curso c 
      LEFT JOIN inscricao i ON c.id_curso = i.id_curso 
+     WHERE c.ativo = 1
      GROUP BY c.id_curso 
      ORDER BY total_inscritos DESC 
      LIMIT 3");

@@ -368,7 +368,7 @@ $aluno_id = $_SESSION['id'];
                 <?php
                 $cursos = mysqli_query($conn, "SELECT c.* FROM curso c 
                                             JOIN inscricao i ON c.id_curso = i.id_curso 
-                                            WHERE i.id_aluno = '$aluno_id'");
+                                            WHERE i.id_aluno = '$aluno_id and ativo = 1'");
                 
                 if (mysqli_num_rows($cursos) > 0) {
                     while ($curso = mysqli_fetch_assoc($cursos)) {

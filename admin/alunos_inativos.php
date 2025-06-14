@@ -622,7 +622,7 @@ $alunos = mysqli_query($conn, $query);
     <!-- Modal de confirmação -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
-            <h3>Confirmar Exclusão</h3>
+            <h3>Confirmar Reativação</h3>
             <p>Tem certeza que deseja reativar este aluno?</p>
             <div class="modal-actions">
                 <button onclick="fecharModal()" class="action-btn cancel-btn">Cancelar</button>

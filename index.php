@@ -539,7 +539,7 @@ position: relative; border-top: 30px;">DISPONIVEIS NO NOSSO SITE</h1>
     include 'config/db.php';
 
     // Consulta para buscar os cursos
-    $sql = "SELECT id_curso, titulo, descricao FROM curso";
+    $sql = "SELECT id_curso, titulo, descricao FROM curso WHERE ativo = 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {

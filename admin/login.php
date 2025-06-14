@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    $stmt = mysqli_prepare($conn, "SELECT * FROM administrador WHERE email_admin = ?");
+    // Verifica também se o admin está ativo
+    $stmt = mysqli_prepare($conn, "SELECT * FROM administrador WHERE email_admin = ? AND ativo = 1");
     mysqli_stmt_bind_param($stmt, "s", $email);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -45,10 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erro = "Senha incorreta.";
         }
     } else {
-        $erro = "Email não encontrado.";
+        $erro = "Email não encontrado ou conta desativada.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt">

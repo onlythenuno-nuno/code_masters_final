@@ -14,6 +14,7 @@ include 'conexao.php';
 $titulo = $_POST['titulo'];
 $descricao = $_POST['descricao'];
 
+
 $stmt = $conn->prepare("INSERT INTO curso (titulo, descricao) VALUES (?, ?)");
 if ($stmt === false) {
     die("Erro na preparação da query: " . $conn->error);

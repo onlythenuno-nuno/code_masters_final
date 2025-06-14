@@ -381,6 +381,8 @@ $historico_certificados = mysqli_query($conn, $historico_query);
     </style>
 </head>
 <body>
+
+
     <div class="container">
         <div class="header">
             <h1 class="page-title">Meus Certificados</h1>
@@ -390,6 +392,15 @@ $historico_certificados = mysqli_query($conn, $historico_query);
                 </svg>
                 Voltar
             </a>
+        </div>
+
+        <div class="section">
+            <div class="warning-box">
+                <strong>⚠️ Aviso importante:</strong> O levantamento do certificado físico tem um custo de <span style="color: green;">10.000 Kwanzas</span> 
+                 e para obter o certificado, o aluno deverá realizar um teste avaliativo.<br> No dia do teste, é obrigatório levar: o <span style="color: green;">Bilhete de Identidade</span>, <span style="color: green;">duas fotos tipo passe</span> e uma <span style="color: green;">cópia do BI</span> <br>
+                <em style="color: red;">Obs:</em> Os testes são baseados nos tópicos apresentados durante o curso.
+                
+            </div>
         </div>
         
         <div class="section">
@@ -434,11 +445,11 @@ $historico_certificados = mysqli_query($conn, $historico_query);
                 </form>
             <?php else: ?>
                 <p class="empty-state">Você não tem cursos concluídos disponíveis para certificação ou você já gerou o código, verifique o histórico abaixo.<br>
-                <span style="color: red;">OBS:</span> Um curso é considerado concluído quando você assiste a todas as aulas.</p>
+                <span style="color: red;">OBS:</span> Um curso é considerado concluído quando você se inscreve e assiste a todas as aulas.</p>
             <?php endif; ?>
             
             <div class="warning-box">
-                <strong>⚠️ Aviso importante:</strong> O levantamento do certificado físico tem um custo de 10.000 Kwanzas por curso.
+                <strong>⚠️ Aviso importante:</strong> O levantamento do certificado físico tem um custo de <span style="color: green;">10.000 Kwanzas</span> por curso.
             </div>
             
             <!-- Seção de Histórico de Certificados -->

@@ -21,7 +21,7 @@ $conn->set_charset("utf8mb4");
 $aluno_id = $_SESSION['id'];
 
 // Consulta aos cursos
-$query = "SELECT * FROM curso";
+$query = "SELECT * FROM curso where ativo = 1";
 $result = $conn->query($query);
 
 if (!$result) {

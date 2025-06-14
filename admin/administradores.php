@@ -13,12 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_admin'])) {
     $email = trim($_POST['email_admin']);
     $senha = trim($_POST['senha_admin']);
     $nivel = $_POST['nivel_admin'];
+    $ativo = 1;
 
     // Verificar se email já existe
     $stmt = $conn->prepare("SELECT id_admin FROM administrador WHERE email_admin = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
+    $ativo = 1;
 
     if ($result->num_rows > 0) {
         $mensagem = "<div class='alert alert-error'>Este email já está cadastrado!</div>";
@@ -26,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_admin'])) {
         // Hash da senha (exceto para super admin)
         $senha_hash = ($nivel == 'super') ? $senha : password_hash($senha, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO administrador (nome_admin, email_admin, senha_admin, nivel) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $nome, $email, $senha_hash, $nivel);
+        $stmt = $conn->prepare("INSERT INTO administrador (nome_admin, email_admin, senha_admin, nivel, ativo) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $nome, $email, $senha_hash, $nivel, $ativo);
 
         if ($stmt->execute()) {
             $mensagem = "<div class='alert alert-success'>Administrador adicionado com sucesso!</div>";
@@ -37,15 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['adicionar_admin'])) {
     }
 }
 
-// Processar remoção de administrador
+// Processar remoção de administrador (soft delete)
 if (isset($_GET['remover_admin'])) {
     $id_remover = $_GET['remover_admin'];
-    
+
     // Não permitir remover a si mesmo
     if ($id_remover != $_SESSION['admin_id']) {
-        $stmt = $conn->prepare("DELETE FROM administrador WHERE id_admin = ?");
+        $stmt = $conn->prepare("UPDATE administrador SET ativo = 0 WHERE id_admin = ?");
         $stmt->bind_param("i", $id_remover);
-        
+
         if ($stmt->execute()) {
             $mensagem = "<div class='alert alert-success'>Administrador removido com sucesso!</div>";
         } else {
@@ -56,13 +58,14 @@ if (isset($_GET['remover_admin'])) {
     }
 }
 
-// Obter lista de administradores
-$admins = $conn->query("SELECT * FROM administrador ORDER BY id_admin DESC");
+// Obter lista de administradores ativos
+$admins = $conn->query("SELECT * FROM administrador WHERE ativo = 1 ORDER BY id_admin DESC");
 
 // Obter estatísticas
 $total_admins = $admins->num_rows;
-$total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc()['total'];
+$total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso WHERE ativo = 1")->fetch_assoc()['total'];
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt">
@@ -460,6 +463,10 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
             from {opacity: 0; transform: translateY(-20px);}
             to {opacity: 1; transform: translateY(0);}
         }
+
+        .inativo{
+            padding: 7px 60px;
+        }
     </style>
 </head>
 <body>
@@ -473,6 +480,7 @@ $total_cursos = $conn->query("SELECT COUNT(*) as total FROM curso")->fetch_assoc
                 <h3>Administração</h3>
                 <a href="painel_admin.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Dashboard</div></a>
                 <div class="menu-item active">Administradores</div>
+                <a href="administradores_inativos.php" style="text-decoration: none; color: inherit;"><div class="menu-item inativo">Administradores Inativos</div></a>
                 <a href="alunos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Alunos</div></a>
                 <a href="cursos.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Cursos</div></a>
                 <a href="certificado.php" style="text-decoration: none; color: inherit;"><div class="menu-item">Certificados</div></a>

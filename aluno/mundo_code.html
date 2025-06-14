@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+    background-color: #170448;
+
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+        
+        .languages-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .language-icon {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin: 10px;
+        }
+        
+        .language-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .info-panel {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+    background-color: #31079b9c;
+            min-height: 300px;
+        }
+        
+        .info-content {
+            display: flex;
+            align-items: center;
+        }
+        
+        .creator-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+        
+        .history-text {
+            flex: 1;
+            color: #ddd;
+        }
+        
+        .active {
+            display: block;
+        }
+
+        .typing-container {
+  font-family: 'Courier New', monospace;
+  font-size: 24px;
+  display: inline-block;
+}
+
+.cursor {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="typing-container">
+            <span id="typing-text">Mundo Code</span>
+            <span class="cursor">|</span>
+          </div>
+    </div>
+    
+    <div class="languages-container">
+        <img src="../Ícones /IMG_1828.PNG" alt="HTML" class="language-icon" onclick="showInfo('html')">
+        <img src="../Ícones /IMG_1833.PNG" alt="CSS" class="language-icon" onclick="showInfo('css')">
+        <img src="../Ícones /IMG_1839.PNG" alt="JavaScript" class="language-icon" onclick="showInfo('javascript')">
+        <img src="../Ícones /IMG_1827.PNG" alt="PHP" class="language-icon" onclick="showInfo('php')">
+    </div>
+    
+    <div id="html-info" class="info-panel">
+        <div class="info-content">
+            <img src="../DEVS/Captura de ecrã 2025-05-18, às 3.44.12 PM.png" alt="Tim Berners-Lee" class="creator-image">
+            <div class="history-text">
+                <h2>HTML</h2>
+                <p>HTML (HyperText Markup Language) foi criado por Tim Berners-Lee em 1991 enquanto trabalhava no CERN. A linguagem foi desenvolvida para facilitar a compartilhamento de documentos científicos entre pesquisadores. A primeira versão pública do HTML foi lançada em 1993 e desde então evoluiu significativamente, com o HTML5 sendo a versão mais recente.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="css-info" class="info-panel">
+        <div class="info-content">
+            <img src="../DEVS/Captura de ecrã 2025-05-18, às 3.46.15 PM.png" alt="Håkon Wium Lie" class="creator-image">
+            <div class="history-text">
+                <h2>CSS</h2>
+                <p>CSS (Cascading Style Sheets) foi proposto por Håkon Wium Lie em 1994 enquanto trabalhava com Tim Berners-Lee no CERN. A primeira especificação oficial (CSS1) foi lançada em 1996 pelo W3C. CSS foi criado para separar o conteúdo (HTML) da apresentação, permitindo designs mais sofisticados e consistentes na web.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="javascript-info" class="info-panel">
+        <div class="info-content">
+            <img src="../DEVS/Captura de ecrã 2025-05-18, às 3.47.27 PM.png" alt="Brendan Eich" class="creator-image">
+            <div class="history-text">
+                <h2>JavaScript</h2>
+                <p>JavaScript foi criado por Brendan Eich em apenas 10 dias em maio de 1995 enquanto trabalhava na Netscape. Originalmente chamado de Mocha, depois LiveScript, finalmente foi renomeado para JavaScript para aproveitar a popularidade da linguagem Java. Apesar do nome, JavaScript não tem relação direta com Java. Tornou-se fundamental para a web moderna com o advento do AJAX e frameworks como jQuery, Angular, React e Vue.js.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="php-info" class="info-panel">
+        <div class="info-content">
+            <img src="../DEVS/Captura de ecrã 2025-05-18, às 3.48.30 PM.png" alt="Rasmus Lerdorf" class="creator-image">
+            <div class="history-text">
+                <h2>PHP</h2>
+                <p>PHP (Personal Home Page, agora PHP: Hypertext Preprocessor) foi criado por Rasmus Lerdorf em 1994. Inicialmente era um conjunto de scripts Perl para rastrear visitas ao seu currículo online. Em 1995, ele lançou a primeira versão pública (PHP/FI). PHP se tornou extremamente popular para desenvolvimento web, alimentando sistemas como WordPress, Facebook (inicialmente) e Wikipedia.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showInfo(language) {
+            // Esconde todos os painéis de informação
+            document.querySelectorAll('.info-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // Mostra o painel da linguagem selecionada
+            document.getElementById(`${language}-info`).classList.add('active');
+        }
+        const typingText = document.getElementById('typing-text');
+const texts = [
+  "Olá, quer saber um pouco",
+  "sobre o mundo da programação?",
+  "Seja Bem-Vindo...",
+ 
+];
+let textIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typingSpeed = 150;
+
+function type() {
+  const currentText = texts[textIndex];
+  
+  if (isDeleting) {
+    // Apagando texto
+    typingText.textContent = currentText.substring(0, charIndex - 1);
+    charIndex--;
+    typingSpeed = 50; // Mais rápido ao apagar
+  } else {
+    // Digitando texto
+    typingText.textContent = currentText.substring(0, charIndex + 1);
+    charIndex++;
+    typingSpeed = 150; // Velocidade normal ao digitar
+  }
+  
+  // Verifica se terminou de digitar ou apagar
+  if (!isDeleting && charIndex === currentText.length) {
+    // Espera antes de começar a apagar
+    typingSpeed = 1000;
+    isDeleting = true;
+  } else if (isDeleting && charIndex === 0) {
+    // Passa para o próximo texto
+    isDeleting = false;
+    textIndex = (textIndex + 1) % texts.length;
+    typingSpeed = 500; // Espera antes de começar novo texto
+  }
+  
+  setTimeout(type, typingSpeed);
+}
+
+// Inicia o efeito
+setTimeout(type, 1000);
+    </script>
+</body>
+</html>
